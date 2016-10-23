@@ -42,16 +42,22 @@ longnum::~longnum()
 	real_size = length = 0;
 }
 longnum::longnum(const longnum & par_longnum)
-	/*:number(new int[par_longnum.real_size])
-	/*,length(par_longnum.length)
-	,real_size(par_longnum.real_size)*/
+	:number(new int[par_longnum.real_size])
+	,length(par_longnum.length)
+	,real_size(par_longnum.real_size)
 {
-	number = new int[par_longnum.real_size];
-	length = par_longnum.length;
-	real_size = par_longnum.real_size;
 	for (size_t i = 0; i < real_size; ++i)
 		number[i] = par_longnum.number[i];
 }
+longnum::longnum(longnum&& par_delitable)
+	:number(new int[par_delitable.real_size])
+		, length(par_delitable.length)
+		, real_size(par_delitable.real_size)
+	{
+		for (size_t i = 0; i < real_size; ++i)
+			number[i] = par_delitable.number[i];
+		par_delitable.~longnum();
+	}
 std::ostream& operator << (std::ostream& ot, const longnum& X)
 {
 	for (size_t i = X.real_size - X.length; i < X.real_size; ++i)
@@ -61,7 +67,6 @@ std::ostream& operator << (std::ostream& ot, const longnum& X)
 std::istream& operator >> (std::istream& it, longnum& X)
 {
 	std::string s;
-//	char c;
 	it >> s;
 	X.length = X.real_size = s.size();
 	X.number = new int[X.length];
@@ -81,6 +86,15 @@ longnum& longnum::operator = (longnum const &td)
 	{
 		longnum(td).swap(*this);
 	}
+	return *this;
+}
+longnum& longnum::operator = (longnum && tp)
+{
+	if (this != &tp)
+	{
+		longnum(tp).swap(*this);
+	}
+	tp.~longnum();
 	return *this;
 }
 const bool operator > (const longnum & left, const longnum & right)

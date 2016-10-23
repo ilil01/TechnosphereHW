@@ -11,11 +11,13 @@ public:
 	//template <typename T>
 	longnum(unsigned long long par);
 	longnum(const longnum & par_longnum);
+	longnum(longnum&& par_delitable);
 	~longnum();
 	friend std::ostream& operator << (std::ostream& ot, const longnum& X);
 	friend std::istream& operator >> (std::istream& it, longnum& X);
 	void swap(longnum &arg);
 	longnum& operator = (const longnum & td);
+	longnum& operator = (longnum && tp);
 	void resize(size_t new_size);
 	size_t get_real_size();
 	friend const longnum operator + (const longnum & left, const longnum & right);
